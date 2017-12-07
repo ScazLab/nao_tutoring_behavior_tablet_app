@@ -4,21 +4,21 @@ Forgive me I will write more here tomorrow. Most changes from previous versions 
 
 ## App Components and Flows
 
-# Connection to server
+## Connection to server
 The connection to the server is handled in the same way as in previous versions of the app via the TCPClient and TCPClientOwner classes.
 The activity which is to receive messages from the server must implement the TCPClientOwner class, and control of the TCPClient instance must be transferred to in when the activity starts up.
 
 More information on this class can be found [here](https://github.com/ScazLab/nao_tutoring/blob/master/README.md#implementing-the-tcpclientowner-interface)
 
-# QuestionActivity
+## QuestionActivity
 Most of the activity in the app happens during the QuestionActivity activity. During this activity, there is a permanent question panel displaying a division question to the user. A keyboard along the bottom serves as the input to the answer input box.
 On the right side, there is a Help panel, which is either blank or displays any visuals necessary to the current tutoring behavior provided.
 
-## Messages accepted from server:
+### Messages accepted from server:
 
-## Examples and Tutorials:
+### Examples and Tutorials:
 
-## Breaks:
+### Breaks:
 
 
 ## Installation Instructions: 

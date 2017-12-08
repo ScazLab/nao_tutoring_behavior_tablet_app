@@ -2,7 +2,7 @@
 
 ## App Components and Flows
 
-## QuestionActivity
+### QuestionActivity
 Most of the activity in the app happens during the QuestionActivity activity. During this activity, there is a permanent question panel displaying a division question to the user. A keyboard along the bottom serves as the input to the answer input box.
 On the right side, there is a Help panel, which is either blank or displays any visuals necessary to the current tutoring behavior provided.
 

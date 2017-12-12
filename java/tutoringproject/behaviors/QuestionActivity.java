@@ -11,9 +11,9 @@ import android.provider.Settings;
 import android.support.annotation.IntegerRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,13 +43,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     TextView denominator;
     Button submitButton;
     Button nextButton;
+    Button checkAnswers;
     NoImeEditText answerText;
     TextView wordProblem;
     TextView resultText;
     Question currentQuestion;
     Question nextQuestion;
 
-    TextView remainderBox;
+    NoImeEditText remainderBox;
     TextView remainderR;
 
     String nextAction;
@@ -58,6 +59,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
     String rBoxAnswers[][] = new String[10][10];
     TextView[] answerBoxes = new TextView[7];
     TextView[] structNumBoxes = new TextView[7];
+    LinearLayout[][] arrows = new LinearLayout[3][6];
 
     int showingHint = 0;
     int exampleStep = 0;
@@ -86,8 +88,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         // these are the possible backgrounds for the answer box
         final Drawable correct_border = ContextCompat.getDrawable(this, R.drawable.answer_correct);
         final Drawable incorrect_border = ContextCompat.getDrawable(this, R.drawable.answer_incorrect);
-        final Drawable normal_answer = ContextCompat.getDrawable(this, R.drawable.answer_background);
-
+        final Drawable correct_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_correct); // these are the same backgrounds as for the main answer box
+        final Drawable incorrect_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_incorrect); // but using the same drawable file causes the answer to change size. I have no idea why.
+        final Drawable nextButtonCorrect = ContextCompat.getDrawable(this, R.drawable.answer_correct_border_focused);
 
         Keyboard mKeyboard = new Keyboard(getApplicationContext(), R.xml.numbers_keyboard);
         mKeyboardView = (KeyboardView) findViewById(R.id.keyboardview);
@@ -168,46 +171,53 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         nextButton = (Button) findViewById(R.id.nextButton);
         answerText = (NoImeEditText) findViewById(R.id.answer); // box for user to input answer
         resultText = (TextView) findViewById(R.id.MathAnswer);  // tells you if correct or incorrect
-        remainderBox = (TextView) findViewById(R.id.Remainder); // this and the R appear only if there
+        remainderBox = (NoImeEditText) findViewById(R.id.Remainder); // this and the R appear only if there
         remainderR = (TextView) findViewById(R.id.R);           // is a remainder
         wordProblem = (TextView) findViewById(R.id.WordQuestion);
 
         for (int i = 0; i < 7; i++){
             for (int j=0; j< 4 ; j++) {
                 rBoxes[i][j] = null;
-                rBoxAnswers[i][j] = "";
+                rBoxAnswers[i][j] = "0";
             }
         }
 
-        rBoxes[1][1] = (TextView) findViewById(R.id.R11);           // initialize and find the rBoxes
-        rBoxes[1][2] = (TextView) findViewById(R.id.R12);
-        rBoxes[2][1] = (TextView) findViewById(R.id.R21);           // rBoxes are the boxes that are
-        rBoxes[2][2] = (TextView) findViewById(R.id.R22);           // filled in during the structure
-        rBoxes[2][3] = (TextView) findViewById(R.id.R23);           // tutorial. rBoxAnswers
-        rBoxes[3][1] = (TextView) findViewById(R.id.R31);           // ( initialized above) store the
-        rBoxes[3][2] = (TextView) findViewById(R.id.R32);           //  correct values corresponding
-        rBoxes[3][3] = (TextView) findViewById(R.id.R33);           // to rBoxes. They are used in
-        rBoxes[4][2] = (TextView) findViewById(R.id.R42);           // interactive tutorials to verify
-        rBoxes[4][3] = (TextView) findViewById(R.id.R43);           // answers
-        rBoxes[4][4] = (TextView) findViewById(R.id.R44);
-        rBoxes[5][2] = (TextView) findViewById(R.id.R52);
-        rBoxes[5][3] = (TextView) findViewById(R.id.R53);
-        rBoxes[5][4] = (TextView) findViewById(R.id.R54);
-        rBoxes[6][3] = (TextView) findViewById(R.id.R63);
-        rBoxes[6][4] = (TextView) findViewById(R.id.R64);
-        rBoxes[6][5] = (TextView) findViewById(R.id.R65);
-        rBoxes[7][3] = (TextView) findViewById(R.id.R73);
-        rBoxes[7][4] = (TextView) findViewById(R.id.R74);
-        rBoxes[7][5] = (TextView) findViewById(R.id.R75);
-        rBoxes[8][4] = (TextView) findViewById(R.id.R84);
-        rBoxes[8][5] = (TextView) findViewById(R.id.R85);
+        for (int i = 0; i < 2; i++){
+            for (int j=0; j< 6 ; j++) {
+                arrows[i][j] = null;
+            }
+        }
 
-        answerBoxes[0] = (TextView) findViewById(R.id.AnsBox1);     // these are the answer boxes above
-        answerBoxes[1] = (TextView) findViewById(R.id.AnsBox2);     // the division bar in the structure
-        answerBoxes[2] = (TextView) findViewById(R.id.AnsBox3);
-        answerBoxes[3] = (TextView) findViewById(R.id.AnsBox4);
-        answerBoxes[4] = (TextView) findViewById(R.id.AnsBox5);
-        answerBoxes[5] = (TextView) findViewById(R.id.AnsBoxR);
+        rBoxes[1][1] = (NoImeEditText) findViewById(R.id.R11);           // initialize and find the rBoxes
+        rBoxes[1][2] = (NoImeEditText) findViewById(R.id.R12);
+        rBoxes[2][1] = (NoImeEditText) findViewById(R.id.R21);           // rBoxes are the boxes that are
+        rBoxes[2][2] = (NoImeEditText) findViewById(R.id.R22);           // filled in during the structure
+        rBoxes[2][3] = (NoImeEditText) findViewById(R.id.R23);           // tutorial. rBoxAnswers
+        rBoxes[3][1] = (NoImeEditText) findViewById(R.id.R31);           // ( initialized above) store the
+        rBoxes[3][2] = (NoImeEditText) findViewById(R.id.R32);           //  correct values corresponding
+        rBoxes[3][3] = (NoImeEditText) findViewById(R.id.R33);           // to rBoxes. They are used in
+        rBoxes[4][2] = (NoImeEditText) findViewById(R.id.R42);           // interactive tutorials to verify
+        rBoxes[4][3] = (NoImeEditText) findViewById(R.id.R43);           // answers
+        rBoxes[4][4] = (NoImeEditText) findViewById(R.id.R44);
+        rBoxes[5][2] = (NoImeEditText) findViewById(R.id.R52);
+        rBoxes[5][3] = (NoImeEditText) findViewById(R.id.R53);
+        rBoxes[5][4] = (NoImeEditText) findViewById(R.id.R54);
+        rBoxes[6][3] = (NoImeEditText) findViewById(R.id.R63);
+        rBoxes[6][4] = (NoImeEditText) findViewById(R.id.R64);
+        rBoxes[6][5] = (NoImeEditText) findViewById(R.id.R65);
+        rBoxes[7][3] = (NoImeEditText) findViewById(R.id.R73);
+        rBoxes[7][4] = (NoImeEditText) findViewById(R.id.R74);
+        rBoxes[7][5] = (NoImeEditText) findViewById(R.id.R75);
+        rBoxes[8][4] = (NoImeEditText) findViewById(R.id.R84);
+        rBoxes[8][5] = (NoImeEditText) findViewById(R.id.R85);
+
+        answerBoxes[0] = (NoImeEditText) findViewById(R.id.AnsBox1);     // these are the answer boxes above
+        answerBoxes[1] = (NoImeEditText) findViewById(R.id.AnsBox2);     // the division bar in the structure
+        answerBoxes[2] = (NoImeEditText) findViewById(R.id.AnsBox3);
+        answerBoxes[3] = (NoImeEditText) findViewById(R.id.AnsBox4);
+        answerBoxes[4] = (NoImeEditText) findViewById(R.id.AnsBox5);
+        answerBoxes[5] = (NoImeEditText) findViewById(R.id.AnsBox6);
+        answerBoxes[6] = (NoImeEditText) findViewById(R.id.AnsBox7);
 
         structNumBoxes[0] = (TextView) findViewById(R.id.NumBox1);   // these are the boxes holding
         structNumBoxes[1] = (TextView) findViewById(R.id.NumBox2);   // digits of the numerator in
@@ -215,7 +225,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         structNumBoxes[3] = (TextView) findViewById(R.id.NumBox4);
         structNumBoxes[4] = (TextView) findViewById(R.id.NumBox5);
 
+        arrows[1][2] = (LinearLayout) findViewById(R.id.arrow12);    // having all the boxes and arrows
+        arrows[1][3] = (LinearLayout) findViewById(R.id.arrow13);    // preinitialized here allows us to easily
+        arrows[1][4] = (LinearLayout) findViewById(R.id.arrow14);    // loop through to add, remove or resize them
+        arrows[1][5] = (LinearLayout) findViewById(R.id.arrow15);
 
+        arrows[2][3] = (LinearLayout) findViewById(R.id.arrow23);
+        arrows[2][4] = (LinearLayout) findViewById(R.id.arrow24);
+        arrows[2][5] = (LinearLayout) findViewById(R.id.arrow25);
 
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,7 +256,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                             TCPClient.singleton.sendMessage(message);
                             answerText.setBackground(correct_border);
-                            remainderBox.setBackground(correct_border);
+                            remainderBox.setBackground(correct_remainder);
+                            nextButton.setBackground(nextButtonCorrect);
+
                             resultText.setText("That is correct.");
                             resultText.setVisibility(View.VISIBLE);
                             nextButton.setVisibility(View.VISIBLE);
@@ -251,7 +270,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                             TCPClient.singleton.sendMessage(message);
                             resultText.setText(remainderBox.getText() + " is incorrect remainder.");
                             answerText.setBackground(correct_border);
-                            remainderBox.setBackground(incorrect_border);
+                            remainderBox.setBackground(incorrect_remainder);
                             resultText.setVisibility(View.VISIBLE);
                             remainderBox.setText("");
                         }
@@ -263,7 +282,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         TCPClient.singleton.sendMessage(message);
                         resultText.setText(answerText.getText() + " is incorrect.");
                         answerText.setBackground(incorrect_border);
-                        remainderBox.setBackground(incorrect_border);
+                        remainderBox.setBackground(incorrect_remainder);
                         resultText.setVisibility(View.VISIBLE);
                         answerText.setText("");
                         remainderBox.setText("");
@@ -277,63 +296,74 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         });
 
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    // progress to the next question and display it
-                    answerText.setText("");         // start by clearing everything
-                    remainderBox.setText("");
-                    resultText.setText("");
-                    resultText.setVisibility(View.INVISIBLE);
-                    nextButton.setVisibility(View.INVISIBLE);
-                    submitButton.setVisibility(View.VISIBLE);
-
-                    // if the next question has text for being a word question, display that instead
-                    // of the math notation
-                    if (nextQuestion.wordProblem != null && !nextQuestion.wordProblem.equals("")) {
-                        numerator.setVisibility(View.INVISIBLE);
-                        denominator.setVisibility(View.INVISIBLE);
-                        ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
-                        division_bar.setVisibility(View.INVISIBLE);
-                        wordProblem.setVisibility(View.VISIBLE);
-                        wordProblem.setText(nextQuestion.wordProblem);
-                    } else {
-                        // otherwise, set the numerator and denominator to show the new numbers
-                        numerator.setVisibility(View.VISIBLE);
-                        denominator.setVisibility(View.VISIBLE);
-                        ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
-                        division_bar.setVisibility(View.VISIBLE);
-                        numerator.setText(nextQuestion.numerator.replace("", " ").trim()); // space out the the digits in numerator
-                        denominator.setText(nextQuestion.denominator);
-                        numerator.setVisibility(View.VISIBLE);
-                        denominator.setVisibility(View.VISIBLE);
-                        wordProblem.setVisibility(View.INVISIBLE);
-                        wordProblem.setText("");
-                    }
-
-                    answerText.setBackground(normal_answer);    //   make sure the answer background is neutral
-                    remainderBox.setBackground(normal_answer);
-
-                    // show the remainder only if the answer has one
-                    if (Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator) != 0) {
-                        remainderBox.setVisibility(View.VISIBLE);
-                        remainderBox.setEnabled(true);
-                        remainderR.setVisibility(View.VISIBLE);
-                    } else {
-                        remainderBox.setVisibility(View.INVISIBLE);
-                        remainderR.setVisibility(View.INVISIBLE);
-                    }
-
-                    clearView(); // clear out any hints, structure or examples from previous question
-
-                    currentQuestion = nextQuestion;
-
-                    // alert server that we are showing the next question
-                    TCPClient.singleton.sendMessage("SHOWING-QUESTION");
-            }
-        });
+                goToNextQuestion();
+        }});
 
         enableButtons();
+    }
+
+    public void goToNextQuestion() {
+        final Drawable normal_answer = ContextCompat.getDrawable(this, R.drawable.answer_background);
+        final Drawable normal_remainder = ContextCompat.getDrawable(this, R.drawable.remainder_background);
+
+        // progress to the next question and display it
+        answerText.setText("");         // start by clearing everything
+        remainderBox.setText("");
+        resultText.setText("");
+        resultText.setVisibility(View.INVISIBLE);
+        nextButton.setVisibility(View.INVISIBLE);
+        submitButton.setVisibility(View.VISIBLE);
+
+        // if the next question has text for being a word question, display that instead
+        // of the math notation
+        if (nextQuestion.wordProblem != null && !nextQuestion.wordProblem.equals("")) {
+            numerator.setVisibility(View.INVISIBLE);
+            denominator.setVisibility(View.INVISIBLE);
+            ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
+            division_bar.setVisibility(View.INVISIBLE);
+            wordProblem.setVisibility(View.VISIBLE);
+            wordProblem.setText(nextQuestion.wordProblem);
+        } else {
+            // otherwise, set the numerator and denominator to show the new numbers
+            numerator.setVisibility(View.VISIBLE);
+            denominator.setVisibility(View.VISIBLE);
+            ImageView division_bar = (ImageView) findViewById(R.id.divisionBar);
+            division_bar.setVisibility(View.VISIBLE);
+            numerator.setText(nextQuestion.numerator.replace("", " ").trim()); // space out the the digits in numerator
+            denominator.setText(nextQuestion.denominator);
+            numerator.setVisibility(View.VISIBLE);
+            denominator.setVisibility(View.VISIBLE);
+            wordProblem.setVisibility(View.INVISIBLE);
+            wordProblem.setText("");
+        }
+
+        remainderBox.setBackground(normal_remainder);
+        answerText.setBackground(normal_answer);    //   make sure the answer background is neutral
+
+        // show the remainder only if the answer has one
+        System.out.println("remainder for question " + Integer.toString(Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator)));
+        if (Integer.parseInt(nextQuestion.numerator) % Integer.parseInt(nextQuestion.denominator) != 0) {
+            remainderBox.setVisibility(View.VISIBLE);
+            remainderBox.setEnabled(true);
+            remainderR.setVisibility(View.VISIBLE);
+        } else {
+            remainderBox.setVisibility(View.INVISIBLE);
+            remainderR.setVisibility(View.INVISIBLE);
+        }
+
+        clearView(); // clear out any hints, structure or examples from previous question
+
+
+
+        currentQuestion = nextQuestion;
+
+        // alert server that we are showing the next question
+        TCPClient.singleton.sendMessage("SHOWING-QUESTION");
+
     }
 
     public void disableButtons() {
@@ -526,7 +556,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         // show and implement button to check answers
         final Drawable correct_input = ContextCompat.getDrawable(this, R.drawable.input_correct);
         final Drawable incorrect_input = ContextCompat.getDrawable(this, R.drawable.input_incorrect);
-        Button checkAnswers = (Button) findViewById(R.id.easyExampleAnswerCheck);
+        checkAnswers = (Button) findViewById(R.id.easyExampleAnswerCheck);
         checkAnswers.setClickable(true);
         checkAnswers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -545,6 +575,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         multiplicationAnswer.setBackground(incorrect_input);
                         any_incorrect = true;
                     }
+                } else {
+                    finished = false;
                 }
                 if (!divisionAnswer.getText().toString().equals("")) {
                     if (divisionAnswer.getText().toString().equals(Integer.toString(quotient))) {
@@ -553,20 +585,23 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         divisionAnswer.setBackground(incorrect_input);
                         any_incorrect = true;
                     }
+                } else {
+                    finished = false;
                 }
 
                 String message;
-                if (finished) {
-                    if (any_incorrect) {
-                        message = "TUTORIAL-STEP-EASY;INCORRECT";
-                    } else {
-                        message = "TUTORIAL-STEP-EASY;CORRECT";
-                        focusNextStepInTutorial();
-                    }
-                } else {
-                    message = "TUTORIAL-STEP-EASY;INCOMPLETE";
+                if (any_incorrect) {
+                    message = "TUTORIAL-STEP-EASY;INCORRECT";
                 }
-
+                else {
+                    if (finished) {
+                        message = "TUTORIAL-STEP-EASY;CORRECT";
+                        enableButtons();
+                    }
+                    else {
+                        message = "TUTORIAL-STEP-EASY;INCOMPLETE";
+                    }
+                }
                 TCPClient.singleton.sendMessage(message);
             }
         });
@@ -583,8 +618,9 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
     public void hideTutorials() {       // hide anything related to a tutorial
         hideStructure();
-        Button checkAnswers = (Button) findViewById(R.id.hardExampleAnswerCheck);
+        checkAnswers = (Button) findViewById(R.id.hardExampleAnswerCheck);
         checkAnswers.setVisibility(View.INVISIBLE);
+        checkAnswers.setClickable(false);
         hideEasyTutorial();
     }
 
@@ -601,9 +637,6 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         ImageView subbar1 = (ImageView) findViewById(R.id.subtractionbar1);
         ImageView subbar2 = (ImageView) findViewById(R.id.subtractionbar2);
         ImageView subbar3 = (ImageView) findViewById(R.id.subtractionbar3);
-        ImageView arrow1 = (ImageView) findViewById(R.id.arrow1);
-        ImageView arrow2 = (ImageView) findViewById(R.id.arrow2);
-        ImageView arrow3 = (ImageView) findViewById(R.id.arrow3);
 
         Drawable normal_input = getResources().getDrawable(R.drawable.input_background);
 
@@ -646,9 +679,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         subbar1.setVisibility(View.INVISIBLE);
         subbar2.setVisibility(View.INVISIBLE);
         subbar3.setVisibility(View.INVISIBLE);
-        arrow1.setVisibility(View.INVISIBLE);
-        arrow2.setVisibility(View.INVISIBLE);
-        arrow3.setVisibility(View.INVISIBLE);
+
+        for (int i = 1; i< arrows.length; i++) {
+            for (int j = 1; j<arrows[i].length; j++) {
+                if (arrows[i][j]!=null) {
+                    arrows[i][j].setVisibility(View.INVISIBLE);
+                }
+            }
+        }
 
         divisionBar.setVisibility(View.INVISIBLE);
 
@@ -666,43 +704,46 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         exampleStep += 1;
         Drawable current_input = getResources().getDrawable(R.drawable.input_background);
 
-        // enable next boxes
-        // @TODO -- this is slightly offset from the way the tablet sends the next step, so I
-        // need to sync the boxes
-        if (exampleStep == 2) {
-            answerBoxes[1].setBackground(current_input);
-            rBoxes[2][3].setBackground(current_input);
-            rBoxes[3][1].setBackground(current_input);
-            rBoxes[3][2].setBackground(current_input);
-            rBoxes[4][2].setBackground(current_input);
-            rBoxes[4][3].setBackground(current_input);
+        int row_to_focus = 0;
 
-            answerBoxes[1].setEnabled(true);
-            rBoxes[2][3].setEnabled(true);
-            rBoxes[3][1].setEnabled(true);
-            rBoxes[3][2].setEnabled(true);
-            rBoxes[4][2].setEnabled(true);
-            rBoxes[4][3].setEnabled(true);
+        for (int i = 0; i < answerBoxes.length; i++) {
+            if (!answerBoxes[i].isEnabled() && !(answerBoxes[i].getText().toString().equals("R"))) {
+                    answerBoxes[i].setEnabled(true);
+                    answerBoxes[i].setBackground(current_input);
+                    break;
+            }
         }
-        if (exampleStep == 3) {
-            answerBoxes[2].setEnabled(true);
-            answerBoxes[3].setEnabled(true);
-            rBoxes[5][2].setEnabled(true);
-            rBoxes[5][3].setEnabled(true);
-            rBoxes[6][3].setEnabled(true);
 
-            answerBoxes[2].setBackground(current_input);
-            answerBoxes[3].setBackground(current_input);
-            rBoxes[5][2].setBackground(current_input);
-            rBoxes[5][3].setBackground(current_input);
-            rBoxes[6][3].setBackground(current_input);
+        for (int i = 0; i < rBoxes.length ; i++) {
+            for (int j = 0; j <rBoxes.length; j++) {
+                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled()) {
+                    row_to_focus = i;
+                    break;
+                }
+
+                if(row_to_focus != 0) {
+                    break;
+                }
+            }
         }
-        else if (exampleStep > 3){
+
+        System.out.println("enabling answer" + Integer.toString(row_to_focus));
+
+        for (int i = row_to_focus; i< row_to_focus + 3 && i<rBoxes.length; i++) {
+            for (int j = 0; j<rBoxes[i].length; j++) {
+                if (rBoxes[i][j]!=null && !rBoxes[i][j].isEnabled()) {
+                    rBoxes[i][j].setEnabled(true);
+                    rBoxes[i][j].setBackground(current_input);
+                }
+            }
+        }
+
+        if (row_to_focus == 0){
+            checkAnswers.setClickable(false);
             TCPClient.singleton.sendMessage("TUTORIAL-STEP;DONE");
             answerText.setEnabled(true);
             submitButton.setEnabled(true);
         }
-
     }
 
     // show the box structure for the given numbers. If this is for a tutorial, additionally
@@ -722,10 +763,6 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         ImageView subbar2 = (ImageView) findViewById(R.id.subtractionbar2);
         ImageView subbar3 = (ImageView) findViewById(R.id.subtractionbar3);
         ImageView subbar4 = (ImageView) findViewById(R.id.subtractionbar4);
-
-        ImageView arrow1 = (ImageView) findViewById(R.id.arrow1);
-        ImageView arrow2 = (ImageView) findViewById(R.id.arrow2);
-        ImageView arrow3 = (ImageView) findViewById(R.id.arrow3);
 
         int num_digits = 1;
         int den_digits = 1;
@@ -750,7 +787,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
 
 
-        // this is a little bit hacky but uses just the numbers of digits to determine how many
+        // this just the numbers of digits to determine how many
         // boxes to show in each row. This way, it also doesn't give extra hints about the problem
         // by tailoring the number of boxes
         denominatorBox.setText(Integer.toString(denominator));
@@ -769,6 +806,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         int numparts = numerator;
         for (int i = num_digits - 1; i >= 0; i--) {
             String numdigit = Integer.toString(numparts % 10);
+
+            if (i == 0 && (numparts % 10 < denominator)) {
+                den_digits = 2;
+            }
+
             numparts = numparts / 10;
             if (structNumBoxes[i] != null) {
                 structNumBoxes[i].setVisibility(View.VISIBLE);
@@ -779,12 +821,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         }
 
-        // show remainder box if this answer has a remainder
+        // show remainder box if this answer has a remainder -- use the next two answer boxes not used
         if (numerator % denominator != 0) {
-            answerBoxes[5].setVisibility(View.VISIBLE);
-            TextView structureR = (TextView) findViewById(R.id.structureR);
-            structureR.setVisibility(View.VISIBLE);
+            answerBoxes[num_digits].setVisibility(View.VISIBLE); // this is the R for "remainder"
+            answerBoxes[num_digits+1].setVisibility(View.VISIBLE); // this is for the actual remainder
+            answerBoxes[num_digits].setText("R");
+            answerBoxes[num_digits].setEnabled(false);
         }
+
 
         if (den_digits == 2) {
             rBoxes[1][1].setVisibility(View.VISIBLE);
@@ -799,6 +843,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                 rBoxes[3][3].setVisibility(View.VISIBLE);
                 rBoxes[4][2].setVisibility(View.VISIBLE);
                 rBoxes[4][3].setVisibility(View.VISIBLE);
+                arrows[2][3].setVisibility(View.VISIBLE);
 
                 bar2.setVisibility(View.VISIBLE);
                 subbar2.setVisibility(View.VISIBLE);
@@ -814,6 +859,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                 bar3.setVisibility(View.VISIBLE);
                 subbar3.setVisibility(View.VISIBLE);
+                arrows[2][4].setVisibility(View.VISIBLE);
+
             }
 
             if (num_digits > 4) {
@@ -826,6 +873,7 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                 bar4.setVisibility(View.VISIBLE);
                 subbar4.setVisibility(View.VISIBLE);
+                arrows[2][5].setVisibility(View.VISIBLE);
             }
 
         }
@@ -838,6 +886,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             rBoxes[3][2].setVisibility(View.VISIBLE);
             rBoxes[4][2].setVisibility(View.VISIBLE);
 
+            arrows[1][2].setVisibility(View.VISIBLE);
+
             bar2.setVisibility(View.VISIBLE);
             subbar2.setVisibility(View.VISIBLE);
 
@@ -849,6 +899,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                 bar3.setVisibility(View.VISIBLE);
                 subbar3.setVisibility(View.VISIBLE);
+                arrows[1][3].setVisibility(View.VISIBLE);
+
             }
 
             if (num_digits > 3) {
@@ -859,6 +911,8 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                 bar4.setVisibility(View.VISIBLE);
                 subbar4.setVisibility(View.VISIBLE);
+                arrows[1][4].setVisibility(View.VISIBLE);
+
             }
 
             if (num_digits > 4) {
@@ -866,13 +920,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
 
                 bar4.setVisibility(View.VISIBLE);
                 subbar4.setVisibility(View.VISIBLE);
-
+                arrows[1][5].setVisibility(View.VISIBLE);
             }
         }
         if (tutorial) {
             // if this is a tutorial, we must do a few more things
             exampleStep = 1;
             System.out.println("starting tutorial");
+            resetRBoxAnswers();
             // extract answers for all of the boxes to be able to check them later
             final String[] answerList = answers.split(":");
             for (int i = 0; i < answerList.length; i++) {
@@ -883,7 +938,6 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     int col = Integer.parseInt(answer[1]);
                     String val = answer[2];
                     rBoxAnswers[row][col]= val;
-
                 }
             }
 
@@ -920,13 +974,19 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             rBoxes[2][2].setEnabled(true);
             answerBoxes[0].setEnabled(true);
 
+            if (rBoxAnswers[0][1].equals("")) {
+                answerBoxes[1].setBackground(current_input);
+                answerBoxes[1].setEnabled(true);
+            }
+
 
             // add button to check current step
             final Drawable correct_input = ContextCompat.getDrawable(this, R.drawable.input_correct);
             final Drawable incorrect_input = ContextCompat.getDrawable(this, R.drawable.input_incorrect);
 
-            Button checkAnswers = (Button) findViewById(R.id.hardExampleAnswerCheck);
+            checkAnswers = (Button) findViewById(R.id.hardExampleAnswerCheck);
             checkAnswers.setVisibility(View.VISIBLE);
+            checkAnswers.setClickable(true);
             checkAnswers.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -939,10 +999,11 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     for (int i = 0; i<answerBoxes.length; i++) {
                         if (answerBoxes[i] != null) {
                             if (answerBoxes[i].isFocusable() && answerBoxes[i].getVisibility()==View.VISIBLE && answerBoxes[i].isEnabled()) {
-                                if (answerBoxes[i].getText().toString().equals("")) {
+                                if (answerBoxes[i].getText().toString().equals("") && !rBoxAnswers[0][i+1].equals("")) {
                                     finished = false;
                                 } else {
-                                    if (answerBoxes[i].getText().toString().equals(rBoxAnswers[0][i+1])) {
+                                    if (answerBoxes[i].getText().toString().equals(rBoxAnswers[0][i+1]) ||
+                                            (rBoxAnswers[0][i+1].equals("") && answerBoxes[i].getText().toString().equals("0"))) {
                                         answerBoxes[i].setBackground(correct_input);
                                     } else {
                                         answerBoxes[i].setBackground(incorrect_input);
@@ -958,16 +1019,18 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         for (int j = 0; j < rBoxes[i].length; j++) {
                             if (rBoxes[i][j] != null) {
                                 if (rBoxes[i][j].isFocusable() && rBoxes[i][j].getVisibility()==View.VISIBLE && rBoxes[i][j].isEnabled()) {
-                                    if (rBoxes[i][j].getText().toString().equals("")) {
+                                    if (rBoxes[i][j].getText().toString().equals("") && !rBoxAnswers[i][j].equals("")) {
                                         finished = false;
                                         System.out.println("empty box" + Integer.toString(i) + Integer.toString(j));
 
                                     } else {
-                                        if (rBoxes[i][j].getText().toString().equals(rBoxAnswers[i][j])) {
+                                        if (rBoxes[i][j].getText().toString().equals(rBoxAnswers[i][j]) ||
+                                                (rBoxAnswers[i][j].equals("") && rBoxes[i][j].getText().toString().equals("0"))) {
                                             rBoxes[i][j].setBackground(correct_input);
                                         } else {
                                             rBoxes[i][j].setBackground(incorrect_input);
                                             any_incorrect = true;
+
                                         }
                                     }
                                 }
@@ -1014,6 +1077,13 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
     }
 
+    public void resetRBoxAnswers() {
+        for (int i = 0; i< rBoxAnswers.length; i++) {
+            for (int j = 0; j < rBoxAnswers.length; j++) {
+                rBoxAnswers[i][j] = "";
+            }
+        }
+    }
     public void fillInEasy(String message_text) {       // fill in the answers for the easy tutorial
         String[] parsed = message_text.split("-");
         TextView current_step_box;
@@ -1024,6 +1094,35 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
         }
 
         current_step_box.setText(parsed[1]);
+    }
+
+    public void fillInBoxes() {
+        // if no string given to specify which boxes to fill in, fill in all currently enabled boxes
+        // this is used in tutorials to fill in the current step -- otherwise it will fill in the whole
+        // structure
+
+        for (int i = 0; i<answerBoxes.length; i++) {
+            if (answerBoxes[i] != null) {
+                if (answerBoxes[i].isFocusable() && answerBoxes[i].getVisibility()==View.VISIBLE && answerBoxes[i].isEnabled()) {
+                    answerBoxes[i].setText(rBoxAnswers[0][i+1]);
+                } else {
+                    System.out.println(Integer.toString(i) + " was not focusable, visible or enabled");
+
+                }
+            }
+        }
+        for (int i = 0; i<rBoxes.length ; i++) {
+            for (int j = 0; j < rBoxes[i].length; j++) {
+                if (rBoxes[i][j] != null) {
+                    if (rBoxes[i][j].isFocusable() && rBoxes[i][j].getVisibility()==View.VISIBLE && rBoxes[i][j].isEnabled()) {
+                        rBoxes[i][j].setText(rBoxAnswers[i][j]);
+                    } else {
+                        System.out.println(Integer.toString(i)+ Integer.toString(j) + " was not focusable, visible or enabled");
+                    }
+                }
+            }
+        }
+
     }
 
     public void fillInBoxes(String message_text) {      // fill in boxes in the structure
@@ -1069,11 +1168,15 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                         && separatedMessage.length == 3) {
                     nextQuestion = mathContol.getQuestion(separatedMessage[1],separatedMessage[2]);
                     nextAction = MathControl.SHOWQUESTION;
+                    submitButton.setVisibility(View.INVISIBLE);
+                    final Drawable nextButtonBackground = ContextCompat.getDrawable(this, R.color.focused_answer);
+                    nextButton.setVisibility(View.VISIBLE);
+                    nextButton.setBackground(nextButtonBackground);
                 }
                 else if (separatedMessage[0].equals(MathControl.STARTTICTACTOE)) {  // start a game of tictactoe
                     startTicTacToe();
                 }
-                else if (separatedMessage[0].equals(MathControl.SHOWHINT)) {        // show text
+                else if (separatedMessage[0].equals(MathControl.SHOWTEXTHINT)) {        // show text
                     showHints(separatedMessage[1]);
                 }
                 else if (separatedMessage[0].equals(MathControl.SHOWSTRUCTURE)) {   // show the box structure
@@ -1091,10 +1194,14 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
                     showStructure(num, dem, true, separatedMessage[2]);                         // but give the answers and set tutorial to true
                 }
                 else if (separatedMessage[0].equals(MathControl.FILLSTRUCTURE)) {               // fill in steps for a tutorial
-                    if (separatedMessage.length > 2 && separatedMessage[2].equals("EASY")) {    // whether easy or structure
-                        fillInEasy(separatedMessage[1]);
+                    if (separatedMessage.length > 2 && separatedMessage[1].equals("EASY")) {    // whether easy or structure
+                        fillInEasy(separatedMessage[2]);
                     } else {
-                        fillInBoxes(separatedMessage[1]);
+                        if (separatedMessage.length > 1) {
+                            fillInBoxes(separatedMessage[1]);
+                        } else {
+                            fillInBoxes();
+                        }
                     }
                 }
                 else if (separatedMessage[0].equals(MathControl.SHOWEASYTUTORIAL)) {            // show balls in boxes for an easy tutorial
@@ -1143,6 +1250,16 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             }
         }
 
+        for (int i = 1; i < arrows.length; i++) {
+            for (int j=1; j<arrows[i].length; j++) {
+                if (arrows[i][j] != null) {
+                    ViewGroup.LayoutParams params= arrows[i][j].getLayoutParams();
+                    params.width= pixels;
+                    arrows[i][j].setLayoutParams(params);
+                }
+            }
+        }
+
         for (int i = 0; i < answerBoxes.length; i++) {
             if (answerBoxes[i]!=null) {
                 ViewGroup.LayoutParams params= answerBoxes[i].getLayoutParams();
@@ -1171,18 +1288,10 @@ public class QuestionActivity extends AppCompatActivity implements TCPClientOwne
             TCPClient.singleton.setSessionOwner(this);
 
         if (data.hasExtra("nextLevel") && data.hasExtra("nextNumber")) {
-            currentQuestion = mathContol.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
-            numerator.setText(currentQuestion.numerator);
-            denominator.setText(currentQuestion.denominator);
-            hideExample();
-            hideHints();
+            nextQuestion = mathContol.getQuestion(data.getExtras().getInt("nextLevel"), data.getExtras().getInt("nextNumber"));
+            goToNextQuestion();
         }
 
         enableButtons();
-
-        answerText.setText("");
-        remainderBox.setText("");
-        resultText.setText("");
-
     }
 }

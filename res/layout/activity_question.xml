@@ -54,48 +54,6 @@
                     android:text=""
                     />
 
-                <tutoringproject.behaviors.NoImeEditText
-                    android:id="@+id/answer"
-                    style="@style/QuestionNumbers"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:background="@drawable/answer_background"
-                    android:gravity="center"
-                    app:layout_constraintHorizontal_bias="0.502"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/WordQuestion" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/R"
-                    style="@style/QuestionNumbers"
-                    app:layout_constraintLeft_toRightOf="@id/answer"
-                    app:layout_constraintTop_toBottomOf="@id/WordQuestion"
-                    android:gravity="center"
-                    android:text="R"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:visibility="invisible"
-                    />
-
-                <tutoringproject.behaviors.NoImeEditText
-                    android:id="@+id/Remainder"
-                    style="@style/QuestionNumbers"
-                    android:layout_width="87dp"
-                    android:layout_height="54dp"
-                    android:layout_marginLeft="24dp"
-                    android:background="@drawable/input_background"
-                    android:gravity="center"
-                    app:layout_constraintLeft_toRightOf="@id/R"
-                    app:layout_constraintTop_toTopOf="@+id/answer"
-                    tools:layout_editor_absoluteY="34dp"
-                    android:visibility="invisible"/>
-
                 <TextView
                     android:id="@+id/Numerator"
                     style="@style/QuestionNumbers"
@@ -107,6 +65,55 @@
                     app:layout_constraintTop_toTopOf="@+id/divisionBar"
                     android:layout_marginLeft="200dp"
                     app:layout_constraintLeft_toLeftOf="@+id/divisionBar" />
+
+                <tutoringproject.behaviors.NoImeEditText
+                    android:id="@+id/answer"
+                    style="@style/QuestionNumbers"
+                    android:layout_width="180dp"
+                    android:width="180dp"
+                    android:minWidth="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:background="@drawable/answer_background"
+                    android:gravity="center"
+                    app:layout_constraintLeft_toLeftOf="@id/Numerator"
+                    app:layout_constraintRight_toRightOf="@id/Numerator"
+                    app:layout_constraintTop_toBottomOf="@id/WordQuestion" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toRightOf="@id/answer"
+                    app:layout_constraintTop_toBottomOf="@id/WordQuestion"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/R"
+                        style="@style/QuestionNumbers"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:gravity="center"
+                        android:text="R"
+                        android:visibility="invisible"
+                        />
+
+                    <tutoringproject.behaviors.NoImeEditText
+                        android:id="@+id/Remainder"
+                        style="@style/QuestionNumbers"
+                        android:layout_width="87dp"
+                        android:layout_height="54dp"
+                        android:layout_marginLeft="24dp"
+                        android:background="@drawable/remainder_background"
+                        android:gravity="center"
+                        app:layout_constraintLeft_toRightOf="@id/R"
+                        app:layout_constraintTop_toTopOf="@+id/answer"
+                        android:visibility="invisible"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/Denominator"
@@ -292,22 +299,8 @@
                     android:visibility="invisible"
                     />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/structureR"
-                    style="@style/QuestionNumbers"
-                    android:text="R"
-                    android:gravity="center"
-                    app:layout_constraintLeft_toRightOf="@id/AnsBox5"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:visibility="invisible"
-
-                    />
-
                 <tutoringproject.behaviors.NoImeEditText
-                    android:id="@+id/AnsBoxR"
+                    android:id="@+id/AnsBox6"
                     style="@style/QuestionNumbers"
                     android:layout_width="@dimen/structure_box_width"
                     android:layout_height="wrap_content"
@@ -315,7 +308,22 @@
                     android:layout_marginLeft="@dimen/structure_box_margin"
                     android:gravity="center"
                     app:layout_constraintHorizontal_bias="0.502"
-                    app:layout_constraintLeft_toRightOf="@id/structureR"
+                    app:layout_constraintLeft_toRightOf="@id/AnsBox5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:visibility="invisible"
+                    />
+
+                <tutoringproject.behaviors.NoImeEditText
+                    android:id="@+id/AnsBox7"
+                    style="@style/QuestionNumbers"
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/input_background"
+                    android:layout_marginLeft="@dimen/structure_box_margin"
+                    android:gravity="center"
+                    app:layout_constraintHorizontal_bias="0.502"
+                    app:layout_constraintLeft_toRightOf="@id/AnsBox6"
                     app:layout_constraintTop_toTopOf="parent"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:visibility="invisible"
@@ -687,7 +695,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/R63"
                     android:layout_marginLeft="@dimen/structure_box_margin"
                     app:layout_constraintLeft_toRightOf="@+id/R42"
-                    android:text="73"
+                    android:visibility="invisible"
                     />
 
                 <tutoringproject.behaviors.NoImeEditText
@@ -701,7 +709,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/R63"
                     android:layout_marginLeft="@dimen/structure_box_margin"
                     app:layout_constraintLeft_toRightOf="@+id/R63"
-                    android:text="74"
+                    android:visibility="invisible"
                     />
 
                 <tutoringproject.behaviors.NoImeEditText
@@ -715,7 +723,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/R63"
                     android:layout_marginLeft="@dimen/structure_box_margin"
                     app:layout_constraintLeft_toRightOf="@+id/R74"
-                    android:text="74"
+                    android:visibility="invisible"
                     />
 
                 <ImageView
@@ -785,43 +793,175 @@
                     android:visibility="invisible"
                     />
 
-                <ImageView
-                    android:id="@+id/arrow1"
-                    android:layout_width="40dp"
-                    android:layout_height="82dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="6dp"
-                    android:src="@drawable/arrow_shorter"
-                    app:layout_constraintLeft_toLeftOf="@id/R22"
-                    app:layout_constraintTop_toBottomOf="@+id/NumBox2"
-                    android:visibility="invisible"
-                    />
-
-                <ImageView
-                    android:id="@+id/arrow2"
-                    android:layout_width="50dp"
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="@dimen/structure_box_margin"
-                    android:src="@drawable/arrow_shorter"
-                    app:layout_constraintLeft_toLeftOf="@id/R23"
-                    app:layout_constraintTop_toBottomOf="@+id/NumBox3"
-                    app:layout_constraintBottom_toTopOf="@+id/R23"
+                    android:id="@+id/arrow12"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox2"
+                    app:layout_constraintBottom_toTopOf="@+id/bar1"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
                     android:visibility="invisible"
-                    />
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="45dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/triangle"
+                        />
+                </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/arrow3"
-                    android:layout_width="50dp"
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="@dimen/structure_box_margin"
-                    android:src="@drawable/arrow"
-                    app:layout_constraintLeft_toLeftOf="@id/R43"
-                    app:layout_constraintTop_toBottomOf="@+id/NumBox3"
-                    app:layout_constraintBottom_toTopOf="@+id/R33"
+                    android:id="@+id/arrow13"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox3"
+                    app:layout_constraintBottom_toTopOf="@+id/bar2"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
                     android:visibility="invisible"
-                    />
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="150dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/arrow23"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox3"
+                    app:layout_constraintBottom_toTopOf="@+id/bar1"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
+                    android:visibility="invisible"
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="45dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/arrow14"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox4"
+                    app:layout_constraintBottom_toTopOf="@id/bar3"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
+                    android:visibility="invisible"
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="250dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/arrow24"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox4"
+                    app:layout_constraintBottom_toTopOf="@+id/bar2"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
+                    android:visibility="invisible"
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="150dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/arrow15"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox5"
+                    app:layout_constraintBottom_toTopOf="@+id/bar4"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
+                    android:visibility="invisible"
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="300dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="@dimen/structure_box_width"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/arrow25"
+                    app:layout_constraintLeft_toLeftOf="@id/NumBox5"
+                    app:layout_constraintBottom_toTopOf="@+id/bar3"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="@dimen/structure_box_margin"
+                    android:visibility="invisible"
+                    >
+                    <ImageView
+                        android:layout_width="2dp"
+                        android:layout_height="250dp"
+                        android:background="@color/black"
+                        android:layout_gravity="center"
+                        />
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/triangle"
+                        android:layout_gravity="center"
+                        />
+                </LinearLayout>
 
 
                 <ImageView

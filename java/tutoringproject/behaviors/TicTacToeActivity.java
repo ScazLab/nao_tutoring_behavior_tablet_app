@@ -204,7 +204,7 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
         int row = selection / 3;
         int col = selection % 3;
 
-        SystemClock.sleep(1500);
+        SystemClock.sleep(4000);
         // Place an O in the square.
         board[row][col] = SquareState.O;
         boardButtons[row][col].setTextColor(Color.GREEN);
@@ -424,8 +424,8 @@ public class TicTacToeActivity extends Activity implements TCPClientOwner {
 
         } else if (msg.contains("TICTACTOE-END") || msg.contains("QUESTION")) {
             String[] separatedMsg = msg.split(";");
+            Intent intent = new Intent();
             if (separatedMsg.length > 2) {
-                Intent intent = new Intent();
                 intent.putExtra("nextLevel", Integer.parseInt(separatedMsg[1]));
                 intent.putExtra("nextNumber", Integer.parseInt(separatedMsg[2]));
                 setResult(Activity.RESULT_OK, intent);

@@ -35,11 +35,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Button startMathButton;
     private EditText message;
     private EditText participantID;
+    private EditText sessionNumberBox;
     private TextView connectionStatus;
 //    private EditText startQuestionNum;
      private EditText conditionNum;
 //    private EditText maxTime;
-     private int sessionNum;
+     private String sessionNum;
      private int expGroup;
 //    private EditText fixedBreakInterval;
 //    private EditText breaksGiven;
@@ -57,6 +58,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         connectButton = (Button) findViewById(R.id.ConnectButton);
         connectionStatus = (TextView) findViewById(R.id.ConnectionStatus);
         startMathButton = (Button)findViewById(R.id.startMathButton);
+        participantID = (EditText) findViewById(R.id.ParticipantID);
+        sessionNumberBox = (EditText) findViewById(R.id.SessionNumber);
 
         startMathButton.setOnClickListener(this);
 
@@ -65,14 +68,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void startMathQuestions(View view) {
 
         Intent intent = new Intent(this, QuestionActivity.class);
-//        Intent intent = new Intent(this, BreakActivity.class);
 
+        try {
+            sessionNum = sessionNumberBox.getText().toString();
+            if (sessionNum.equals("") || Integer.parseInt(sessionNum)> 4) {
+                sessionNum = "1";
+            }
+        } catch(NumberFormatException e) {
+           sessionNum = "1";
+        }
+
+
+        String pid;
+
+        try {
+            pid = participantID.getText().toString();
+            Integer.parseInt(pid);
+        } catch(NumberFormatException e) {
+            pid = "600001";
+            //return;
+        }
 
         //send message to computer to convey session starting
         if (TCPClient.singleton != null) {
             String startMessage = "";
 
-            startMessage = "START;" + "-1;-1;" + 700001 + "," + sessionNum + "," + expGroup;
+            startMessage = "START;" + pid + ";" + sessionNum + ";" + expGroup;
 
             mTcpClient.sendMessage(startMessage);
         }
@@ -90,7 +111,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == startMathButton) {
-            sessionNum = 1;
+            sessionNum = "1";
             expGroup = 1;
         }
         startMathQuestions(v);
@@ -125,12 +146,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                     Log.e("MainActivity", "Message received from server: hiding options");
 
-                    // showMoodMeter = false;
-                    //if (message.equalsIgnoreCase("done"))
-                    //    showOptions = true;
-                    // aditi currentlyPlaying = new String("");
-	                    /*thread.setRunning(false);
-	    				((Activity)getContext()).finish();*/
 
                 }
             }, owner);

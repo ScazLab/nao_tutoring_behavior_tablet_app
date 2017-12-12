@@ -14,7 +14,7 @@ public class MathControl {
 
     public static String QUESTIONMESSAGE = "QUESTION";
     public static String STARTTICTACTOE = "TICTACTOE";
-    public static String SHOWHINT = "SHOWHINT";
+    public static String SHOWTEXTHINT = "SHOWTEXTHINT";
     public static String SHOWEXAMPLE = "SHOWEXAMPLE";
     public static String SHOWLESSON = "SHOWLESSON";
     public static String SHOWQUESTION ="QUESTION";

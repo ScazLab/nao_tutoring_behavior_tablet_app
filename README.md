@@ -1,5 +1,9 @@
 # nao_tutoring_behavior_tablet_app
 
+This repository contains code of the tablet application for the adaptive behavior tutoring systems project.
+
+To see the final report and other deliverables associated with this senior project code, see [here](http://zoo.cs.yale.edu/classes/cs490/17-18a/zakrzewska.aleksandrakonstancja.akz4/) (Yale Only).
+
 ## App Components and Flows
 
 ### QuestionActivity
@@ -69,6 +73,6 @@ More information on this class can be found [here](https://github.com/ScazLab/na
 
 If not using Android studio, or if you have an existing project you want to use, this repository has all the code files you need to get the app running. 
 
-Otherwise, installation instructions for Android Studio vary by version and type of build, and can get confusing if you try to move between things. If you want to try the old build (without gradle) there are nice instructions by Arsalan Sufi [here] (https://github.com/ScazLab/nao_tutoring/blob/master/README.md#installation-instructions-android-app) 
+Otherwise, installation instructions for Android Studio vary by version and type of build, and can get confusing if you try to move between things. If you want to try the old build (without gradle) there are nice instructions by Arsalan Sufi [here](https://github.com/ScazLab/nao_tutoring/blob/master/README.md#installation-instructions-android-app) 
 
-You can also go ahead and clone this [this repository] (https://github.com/ScazLab/nao_tutoring_behavior_tablet_app_with_gradle) with all of the build files and build settings. In that case, use Android Studio to Import (File-> New -> Import Project) and click on the build.gradle file. When everything has imported, try pressing Run to build it. It might take a while the first time, but it should work.
+You can also go ahead and clone this [this repository](https://github.com/ScazLab/nao_tutoring_behavior_tablet_app_with_gradle) with all of the build files and build settings. In that case, use Android Studio to Import (File-> New -> Import Project) and click on the build.gradle file. When everything has imported, try pressing Run to build it. It might take a while the first time, but it should work.
